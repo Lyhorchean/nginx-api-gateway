@@ -9,7 +9,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+      - name: Debug Docker Login
+        run: |
+          echo "Username: ${{ secrets.DOCKERHUB_USERNAME }}"
+          echo "Token starts with: dckr_pat_"
+          docker --version
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
