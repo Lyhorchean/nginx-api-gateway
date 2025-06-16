@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   mockoon-services:
     build:
@@ -8,7 +10,7 @@ services:
       - "3003:3003"
       - "3004:3004"
       - "3005:3005"
-    restart: always  # 👈 add this line
+    restart: always
 
   nginx:
     build:
@@ -17,4 +19,8 @@ services:
       - api_gateway_network
     ports:
       - "80:80"
-    restart: always  # 👈 add this line
+    restart: always
+
+# 👇 This part is required!
+networks:
+  api_gateway_network:
