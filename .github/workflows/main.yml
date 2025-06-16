@@ -1,0 +1,43 @@
+name: CI - Test Nginx API Gateway
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: 🐳 Set up Docker
+      uses: docker/setup-buildx-action@v3
+
+    - name: 📦 Install Docker Compose
+      run: |
+        DOCKER_COMPOSE_VERSION=2.24.5
+        sudo curl -L "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        docker-compose --version
+
+    - name: 🧱 Build Docker Images
+      run: docker-compose build
+
+    - name: 🚀 Start Services in Background
+      run: docker-compose up -d
+
+    - name: 🕒 Wait for Services to Be Ready
+      run: sleep 10
+
+    - name: 🧪 Test API Endpoints
+      run: |
+        curl -f http://localhost/users || exit 1
+        curl -f http://localhost/products || exit 1
+        curl -f http://localhost/orders || exit 1
+
+    - name: 🧹 Tear Down Containers
+      run: docker-compose down
